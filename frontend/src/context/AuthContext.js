@@ -1,6 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://my-budget-app-backend-bb70.onrender.com';
+axios.defaults.baseURL = API_URL;
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
