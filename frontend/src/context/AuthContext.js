@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://my-budget-app-backend-bb70.onrender.com';
-axios.defaults.baseURL = API_URL;
+axios.defaults.baseURL = 'https://my-budget-app-backend-bb70.onrender.com';
 
 const AuthContext = createContext();
 
@@ -11,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  // Set axios default header
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -20,7 +18,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // Fetch user on mount
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
