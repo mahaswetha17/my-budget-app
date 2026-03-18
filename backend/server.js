@@ -28,14 +28,6 @@ app.use('/api/reports', reportRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!', error: err.message });
-});
-
-const PORT = process.env.PORT || 5005;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
-
 // Gemini test route
 app.get('/api/test-gemini', async (req, res) => {
   try {
@@ -43,8 +35,24 @@ app.get('/api/test-gemini', async (req, res) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
     const result = await model.generateContent('Say hello in one word');
-    res.json({ success: true, response: result.response.text(), key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing' });
+    res.json({
+      success: true,
+      response: result.response.text(),
+      key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing'
+    });
   } catch (error) {
-    res.json({ success: false, error: error.message, key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing' });
+    res.json({
+      success: false,
+      error: error.message,
+      key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing'
+    });
   }
 });
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+});
+
+const PORT = process.env.PORT || 5005;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
