@@ -1,8 +1,8 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Use gemini-2.0-flash - latest and fastest free model
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+// Using gemini-2.0-flash-lite - latest stable free model
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
 async function parseNaturalLanguageTransaction(input) {
   try {

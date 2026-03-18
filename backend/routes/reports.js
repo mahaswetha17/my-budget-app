@@ -1,7 +1,7 @@
 const express = require('express');
 const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
-const { generateMonthlyReport, askFinanceQuestion } = require('../controllers/geminiController_final');
+const { generateMonthlyReport, askFinanceQuestion } = require('../controllers/Geminicontroller');
 
 const router = express.Router();
 router.use(protect);
