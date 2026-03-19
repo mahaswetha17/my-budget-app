@@ -28,23 +28,26 @@ app.use('/api/reports', reportRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// Gemini test route
-app.get('/api/test-gemini', async (req, res) => {
+// Test Llama via Groq
+app.get('/api/test-ai', async (req, res) => {
   try {
-    const { GoogleGenerativeAI } = require('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
-    const result = await model.generateContent('Say hello in one word');
+    const Groq = require('groq-sdk');
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const completion = await groq.chat.completions.create({
+      model: 'llama3-8b-8192',
+      messages: [{ role: 'user', content: 'Say hello in one word' }],
+      max_tokens: 10
+    });
     res.json({
       success: true,
-      response: result.response.text(),
-      key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing'
+      response: completion.choices[0].message.content,
+      key: process.env.GROQ_API_KEY ? 'Groq key exists' : 'Groq key missing'
     });
   } catch (error) {
     res.json({
       success: false,
       error: error.message,
-      key: process.env.GEMINI_API_KEY ? 'Key exists' : 'Key missing'
+      key: process.env.GROQ_API_KEY ? 'Groq key exists' : 'Groq key missing'
     });
   }
 });
