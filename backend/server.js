@@ -34,7 +34,7 @@ app.get('/api/test-ai', async (req, res) => {
     const Groq = require('groq-sdk');
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const completion = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: 'Say hello in one word' }],
       max_tokens: 10
     });

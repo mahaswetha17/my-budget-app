@@ -1,10 +1,13 @@
 const Groq = require('groq-sdk');
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+// Latest Llama model on Groq
+const MODEL = 'llama-3.3-70b-versatile';
+
 async function parseNaturalLanguageTransaction(input) {
   try {
     const completion = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: MODEL,
       messages: [
         {
           role: 'system',
@@ -21,7 +24,6 @@ Rules: spent/paid/bought = expense. received/earned/got/from = income. Return []
       temperature: 0.1,
       max_tokens: 500
     });
-
     const text = completion.choices[0].message.content.trim().replace(/```json|```/g, '').trim();
     console.log('Llama parse response:', text);
     return { success: true, transactions: JSON.parse(text) };
@@ -35,11 +37,11 @@ async function generateMonthlyReport(data) {
   try {
     const { userName, month, year, totalIncome, totalExpense, savings, topCategories, currency } = data;
     const completion = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: MODEL,
       messages: [
         {
           role: 'system',
-          content: 'You are a warm, friendly financial advisor who speaks simply and kindly.'
+          content: 'You are a warm, friendly financial advisor who speaks simply and kindly like a helpful family member.'
         },
         {
           role: 'user',
@@ -49,18 +51,12 @@ Income: ${currency}${totalIncome}
 Spent: ${currency}${totalExpense}
 Savings: ${currency}${savings}
 Top spending: ${topCategories.map(c => `${c.category}: ${currency}${c.total}`).join(', ')}
-
-Write 3 short paragraphs under 150 words total:
-1. Warm greeting and summary
-2. What they spent money on
-3. Two practical saving tips
-Be warm like a helpful family member, not a bank.`
+Write 3 short paragraphs under 150 words total. Warm greeting, spending summary, 2 saving tips.`
         }
       ],
       temperature: 0.7,
       max_tokens: 300
     });
-
     console.log('Llama report generated successfully');
     return { success: true, report: completion.choices[0].message.content };
   } catch (error) {
@@ -72,7 +68,7 @@ Be warm like a helpful family member, not a bank.`
 async function askFinanceQuestion(question, userContext) {
   try {
     const completion = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: MODEL,
       messages: [
         {
           role: 'system',
@@ -80,14 +76,12 @@ async function askFinanceQuestion(question, userContext) {
         },
         {
           role: 'user',
-          content: `My monthly income is ${userContext.currency}${userContext.monthlyIncome} and I spend ${userContext.currency}${userContext.monthlyExpense}.
-Question: ${question}`
+          content: `My monthly income is ${userContext.currency}${userContext.monthlyIncome} and I spend ${userContext.currency}${userContext.monthlyExpense}. Question: ${question}`
         }
       ],
       temperature: 0.7,
       max_tokens: 150
     });
-
     console.log('Llama answer generated successfully');
     return { success: true, answer: completion.choices[0].message.content };
   } catch (error) {
